@@ -349,6 +349,27 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
+
+
+		// *** ARROWHEAD CUSTOM CODE ***
+		var eConduitUrl = "<?php echo(getenv("ECONDUIT_URL")) ?>";
+		console.log("Using eConduit URL: ", eConduitUrl);
+		var eConduitKey = "<?php echo(getenv("ECONDUIT_KEY")) ?>";
+		var eConduitPwd = "<?php echo(getenv("ECONDUIT_PWD")) ?>";
+		var eConduitTermId = "<?php echo(getenv("ECONDUIT_TERM_ID")) ?>";
+		// TODO: generate guid for refID
+		var refID = "1234";
+		var reqUrl = `${eConduitUrl}/services/api.asmx/runTransaction?command=sale&key=${eConduitKey}&password=${eConduitPwd}&amount=${amountpayed}&refID=${refID}&terminalId=${eConduitTermId}`;
+		fetch(reqUrl)
+			.then(function(response) {
+			return response.json();
+			})
+			.then(function(data) {
+				console.log("runTransaction response:");
+				console.log("ResultCode:", data.ResultCode);
+			});
+
+
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");

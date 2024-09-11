@@ -16,6 +16,7 @@ services:
 
   web:
     image: dolibarr/dolibarr:latest
+    env_file: ".env"
     environment:
       # DOLI_DB_TYPE: pgsql
       # DOLI_DB_HOST: postgres
